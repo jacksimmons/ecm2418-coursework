@@ -17,7 +17,6 @@ digits x
 
 -- PAR: A four-digit number with different positive digits and with the numbers represented by its last two digits a multiple of the number represented by its first two digits, is called a PAR.
 
--- notElem: https://hackage.haskell.org/package/base-4.9.0.0/docs/Data-List.html
 -- Checks for one occurrence of e recursively; if none are found -> False; if one is found -> notElem e xs
 isElementUnique :: Eq a => [a] -> a -> Bool
 isElementUnique [] e
@@ -40,10 +39,15 @@ isPar x
     -- All digits are unique
     allElementsUnique xs &&
     -- 2-digit number represented by x2 and x3 is a multiple of the 2-digit number represented by x0 and x1.
-    (((10 * x2) + x3) `mod` ((10 * x0) + x1) == 0)
+    (((10 * x2) + x3) `mod` ((10 * x0) + x1) == 0) &&
+    -- Ensure none of the digits are 0, as 0 isn't positive
+    x0 /= 0 &&
+    x1 /= 0 &&
+    x2 /= 0 &&
+    x3 /= 0
     where
     xs = digits x
-    x0:x1:x2:x3:[] = digits x
+    x0:x1:x2:x3:[] = xs
 
 parGenerator :: [Int]
 parGenerator = [1000..9999]
@@ -87,3 +91,15 @@ partys
   = filter isParty partyGenerator
 
 {-End Question 1.3-}
+
+-- Checks:
+-- Function types (tick)
+-- Output test (tick)
+
+main :: IO ()
+main
+  = print (digits 9124) >>
+    print (isPar 2678) >>
+    print (pars) >>
+    print (isParty (2754, 1836)) >>
+    print (partys)

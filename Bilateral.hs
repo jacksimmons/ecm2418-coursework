@@ -13,20 +13,22 @@ number (x:xs)
 {-End Question 2.1-}
 
 {-Begin Question 2.2-}
-generateSplit :: [Int] -> [Int] -> Int -> ([Int], [Int])
+generateSplit :: [a] -> [a] -> Int -> ([a], [a])
 generateSplit xs ys 0
   = (xs, ys)
 generateSplit [] [] n
   = ([], [])
 generateSplit xs ys n
-  = par final seq initial (generateSplit initial (final : ys) (n-1))
+  = (generateSplit initial (final : ys) (n-1))
   where
   final = last xs
   initial = init xs
 
-splits :: [Int] -> [([Int],[Int])]
+-- Generates splits with list comprehension
+-- Note: reverse is used so the output matches the specification
+splits :: [a] -> [([a],[a])]
 splits xs
-  = [generateSplit xs [] n | n <- [1..(length xs - 1)]]
+  = [generateSplit xs [] n | n <- reverse [1..(length xs - 1)]]
 
 mergeListOfLists :: [[a]] -> [a] -> [a]
 mergeListOfLists [] ys
@@ -44,18 +46,17 @@ numPossibles = length possibles
 {-End Question 2.2-}
 
 {-Begin Question 2.3-}
-par :: a -> b -> b
-par x y = y
-
 palindrome :: Int -> Bool
 palindrome x
-  = digits x == reverse (digits x)
+  =
+  listX == reverse listX
+  where listX = digits x
 
 isAcceptable :: ([Int],[Int]) -> Bool
 isAcceptable (xs, ys)
   =
   (firstDigitOfProd == 4) &&
-  (last (digits smallest) == 3) &&
+  (smallest `mod` 10 == 3) &&
   (palindrome prod)
   where
   prod = (number xs) * (number ys)
@@ -65,8 +66,23 @@ isAcceptable (xs, ys)
     if number xs > number ys then number ys
     else number xs
 
+-- 6 sols (tick)
+-- Slow function, can take 3 minutes
 acceptables :: [([Int],[Int])]
 acceptables
   = filter isAcceptable possibles
 
 {-End Question 2.3-}
+
+-- Checks:
+-- Function types (tick)
+-- Testing output (tick)
+
+-- Testing:
+main :: IO ()
+main
+  = -- Basic output
+    print (number [9,1,2,4]) >>
+    print (splits [1,2,3,4]) >>
+    print (isAcceptable ([7,1,6,3], [5,9,2,4,8])) >>
+    print (acceptables)
